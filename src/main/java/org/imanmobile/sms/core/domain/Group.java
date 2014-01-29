@@ -18,8 +18,9 @@ public class Group implements Serializable {
 	
 	@Reference
 	private User user;
-	
-	public Group(){}
+
+
+    public Group(){}
 
 	public ObjectId getId() {
 		return id;

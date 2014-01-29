@@ -31,8 +31,17 @@ public class User implements Serializable {
 	private List<Group> usergroups = new ArrayList<>();
 	
 	public User(){}
-	
-	public ObjectId getId() {
+
+    private User(String username, String firstname, String lastname, String email, long cellnumber, String password) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.cellnumber = cellnumber;
+        this.password = password;
+    }
+
+    public ObjectId getId() {
 		return id;
 	}
 

@@ -8,8 +8,9 @@ public class Account {
 	
 	private double balance = 0.00;
 	private double smsvalue;
+    private boolean active;
 
-	public double getBalance() {
+    public double getBalance() {
 		return balance;
 	}
 
@@ -25,8 +26,16 @@ public class Account {
 		this.smsvalue = smsvalue;
 	}
 
-	@Override
-	public String toString() {
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
 		return "Account [balance=" + balance + ", smsvalue=" + smsvalue + "]";
 	}
 	

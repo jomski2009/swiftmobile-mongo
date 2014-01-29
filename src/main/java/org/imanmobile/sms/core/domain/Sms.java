@@ -1,14 +1,20 @@
 package org.imanmobile.sms.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
 import java.util.*;
 
 /**
  * Created by jome on 2014/01/29.
  */
+
+@Entity
 public class Sms {
-    private long id;
+    @Id
+    private ObjectId id;
 
 
     private String text;
@@ -22,14 +28,6 @@ public class Sms {
     private List<SmsResponse> responses = new ArrayList<SmsResponse>();
 
     private User sender;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getText() {
         return text;
@@ -85,5 +83,13 @@ public class Sms {
 
     public void setSender(User sender) {
         this.sender = sender;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.imanmobile.sms.core.domain.*;
 import org.imanmobile.sms.providers.InfobipSmsProvider;
+import org.imanmobile.sms.services.UserService;
 import org.json.simple.parser.ParseException;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -32,10 +33,34 @@ public class PlayClass implements CommandLineRunner {
     @Autowired
     InfobipSmsProvider infobipSmsProvider;
 
-	@Override
+    @Autowired
+    UserService userService;
+
+    @Override
 	public void run(String... args) throws Exception {
-		sendSms();
-	}
+        createUser();
+
+    }
+
+    private void createUser() {
+        User user = new User();
+        Account account = new Account();
+        account.setActive(true);
+        account.setBalance(0);
+        account.setSmsvalue(0);
+
+        user.setAccount(account);
+        user.setActive(true);
+        user.setCellnumber(27719166815L);
+        user.setEmail("jome@example.com");
+        user.setFirstname("Jome");
+        user.setLastname("Akpoduado");
+        user.setPassword("wordpass15");
+        user.setUsername("onajomski");
+
+        System.out.println(userService.addUser(user));
+
+    }
 
 
     private void sendSms(){
@@ -58,7 +83,6 @@ public class PlayClass implements CommandLineRunner {
         sms.setType("longSMS");
         sms.setDatesent(new Date());
         sms.setMessageid("234567");
-        sms.setId(1001L);
 
 
         BaseSms baseSms = new BaseSms();
@@ -72,7 +96,6 @@ public class PlayClass implements CommandLineRunner {
         sms1.setType("longSMS");
         sms1.setDatesent(new Date());
         sms1.setMessageid("8972323");
-        sms1.setId(1002L);
 
 
         BaseSms baseSms1 = new BaseSms();
@@ -95,6 +118,8 @@ public class PlayClass implements CommandLineRunner {
             e.printStackTrace();
         }
 
+        System.out.println("Credit remaining: " + infobipSmsProvider.getCredits());
+
     }
 
 	private void scenario2() {
@@ -112,9 +137,9 @@ public class PlayClass implements CommandLineRunner {
 
 		Account account = new Account();
 		account.setBalance(0.0);
-		account.setSmsvalue(0.18);
+        account.setSmsvalue(0.0);
 
-		UpdateOperations<User> update = datastore
+        UpdateOperations<User> update = datastore
 				.createUpdateOperations(User.class);
 		update.set("account", account);
 		
