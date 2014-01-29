@@ -1,21 +1,26 @@
 package org.imanmobile.sms;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.imanmobile.sms.core.domain.Account;
-import org.imanmobile.sms.core.domain.Group;
-import org.imanmobile.sms.core.domain.User;
+import org.imanmobile.sms.core.domain.*;
+import org.imanmobile.sms.providers.InfobipSmsProvider;
+import org.json.simple.parser.ParseException;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PlayClass implements CommandLineRunner {
+            @Autowired
+    Environment env;
 
 
 	@Autowired
@@ -24,10 +29,73 @@ public class PlayClass implements CommandLineRunner {
 	@Autowired
 	Datastore datastore;
 
+    @Autowired
+    InfobipSmsProvider infobipSmsProvider;
+
 	@Override
 	public void run(String... args) throws Exception {
-		scenario2();
+		sendSms();
 	}
+
+
+    private void sendSms(){
+        SmsWrapper wrapper = new SmsWrapper();
+        SenderAuthentication authentication = new SenderAuthentication();
+        Sms sms = new Sms();
+        Sms sms1 = new Sms();
+
+        List<Recipient> recipients = new ArrayList<Recipient>();
+        List<BaseSms> messages = new ArrayList<BaseSms>();
+
+
+        Recipient r1 = new Recipient(27719166815L);
+        Recipient r2 = new Recipient(27837930939L);
+        recipients.add(r1);
+        recipients.add(r2);
+
+        sms.setText("ImanMobile... Wazzup!!!");
+        sms.setRecipients(recipients);
+        sms.setType("longSMS");
+        sms.setDatesent(new Date());
+        sms.setMessageid("234567");
+        sms.setId(1001L);
+
+
+        BaseSms baseSms = new BaseSms();
+        BeanUtils.copyProperties(sms, baseSms);
+        messages.add(baseSms);
+
+        recipients.clear();
+        recipients.add(r1);
+        sms1.setText("A miracle on the way for you... Wazzup!!!");
+        sms1.setRecipients(recipients);
+        sms1.setType("longSMS");
+        sms1.setDatesent(new Date());
+        sms1.setMessageid("8972323");
+        sms1.setId(1002L);
+
+
+        BaseSms baseSms1 = new BaseSms();
+        BeanUtils.copyProperties(sms1, baseSms1);
+        messages.add(baseSms1);
+
+
+
+
+
+        authentication.setUsername("ImanAfrica");
+        authentication.setPassword("Afri2013");
+
+        wrapper.setAuthentication(authentication);
+        wrapper.setMessages(messages);
+
+        try {
+            System.out.println(infobipSmsProvider.sendJsonSMS(wrapper).getResults());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 	private void scenario2() {
 		
