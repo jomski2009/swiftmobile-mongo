@@ -11,7 +11,7 @@ import java.util.*;
  * Created by jome on 2014/01/29.
  */
 
-@Entity
+@Entity(value = "smses")
 public class Sms {
     @Id
     private ObjectId id;

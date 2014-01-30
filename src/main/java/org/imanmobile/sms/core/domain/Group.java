@@ -1,6 +1,7 @@
 package org.imanmobile.sms.core.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
@@ -14,9 +15,9 @@ public class Group implements Serializable {
 	private ObjectId id;
 	private String name;
 	private String description;
-	private long creationdate;
-	
-	@Reference
+    private Date creationdate;
+
+    @Reference
 	private User user;
 
 
@@ -46,12 +47,12 @@ public class Group implements Serializable {
 		this.description = description;
 	}
 
-	public long getCreationdate() {
-		return creationdate;
+    public Date getCreationdate() {
+        return creationdate;
 	}
 
-	public void setCreationdate(long creationdate) {
-		this.creationdate = creationdate;
+    public void setCreationdate(Date creationdate) {
+        this.creationdate = creationdate;
 	}
 
 	public User getUser() {

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.imanmobile.sms.core.domain.*;
+import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.InfobipSmsProvider;
 import org.imanmobile.sms.services.UserService;
 import org.json.simple.parser.ParseException;
@@ -38,27 +39,67 @@ public class PlayClass implements CommandLineRunner {
 
     @Override
 	public void run(String... args) throws Exception {
-        createUser();
+//        createUser();
+//        activateAccount();
+        getBalanceAndSmsValue();
 
     }
 
+    private void activateAccount() {
+        String username = "jomski2009";
+        userService.activateAccount(username);
+    }
+
+    private void setBalanceAndSmsValue() {
+        String username = "jomski2009";
+        double v = 0;
+        double v1 = 0;
+        try {
+            v = userService.updateAccountBalanceForUser(username, -1);
+            v1 = userService.updateSmsValueForUser(username, 0.18);
+            System.out.println("Account Balance: " + v + "\nSms Value: " + v1);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getBalanceAndSmsValue() {
+        String username = "jomski2009";
+        double v = 0;
+        double v1 = 0;
+        try {
+            v1 = userService.getSmsValueFor(username);
+            v = userService.getBalanceFor(username);
+            System.out.println("Account Balance: " + v + "\nSms Value: " + v1);
+        } catch (UserNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void createUser() {
-        User user = new User();
+        try {
+            User user = new User();
         Account account = new Account();
         account.setActive(true);
         account.setBalance(0);
-        account.setSmsvalue(0);
+            account.setSmsvalue(0.25);
 
-        user.setAccount(account);
+            user.setAccount(account);
         user.setActive(true);
-        user.setCellnumber(27719166815L);
-        user.setEmail("jome@example.com");
-        user.setFirstname("Jome");
-        user.setLastname("Akpoduado");
+            user.setCellnumber(27836173018L);
+            user.setEmail("juliet@example.com");
+            user.setFirstname("Juliet");
+            user.setLastname("Akpoduado");
         user.setPassword("wordpass15");
-        user.setUsername("onajomski");
+            user.setUsername("juliet");
 
-        System.out.println(userService.addUser(user));
+
+            System.out.println(userService.addUser(user));
+        } catch (Exception me) {
+
+            System.out.println(me);
+        }
+
 
     }
 
@@ -113,7 +154,7 @@ public class PlayClass implements CommandLineRunner {
         wrapper.setMessages(messages);
 
         try {
-            System.out.println(infobipSmsProvider.sendJsonSMS(wrapper).getResults());
+            System.out.println(infobipSmsProvider.sendSms(wrapper).getResults());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -146,8 +187,8 @@ public class PlayClass implements CommandLineRunner {
 		List<Group> groups = query.get().getUsergroups();
 
 		Group group1 = new Group();
-		group1.setCreationdate(new Date().getTime());
-		group1.setDescription("test group for first user");
+        group1.setCreationdate(new Date());
+        group1.setDescription("test group for first user");
 		group1.setName("Group One");
 		group1.setUser(query.get());
 		datastore.save(group1);
@@ -156,8 +197,8 @@ public class PlayClass implements CommandLineRunner {
 		datastore.update(query, update);
 
 		Group group2 = new Group();
-		group2.setCreationdate(new Date().getTime());
-		group2.setDescription("Another test group for first user");
+        group2.setCreationdate(new Date());
+        group2.setDescription("Another test group for first user");
 		group2.setName("Group Two");
 		group2.setUser(query.get());
 		datastore.save(group2);

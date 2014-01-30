@@ -2,6 +2,8 @@ package org.imanmobile.sms.config;
 
 import java.net.UnknownHostException;
 
+import org.imanmobile.sms.core.domain.Group;
+import org.imanmobile.sms.core.domain.User;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +53,12 @@ public class MongoDbConfiguration {
     	
     	Datastore ds = morphia.createDatastore(mongoClient(), "imanmobile");
     	ds.ensureIndexes();
-    	
-    	return  ds;
+        ds.ensureIndex(User.class, "username", "username", true, true);
+        ds.ensureIndex(User.class, "email", "email", true, true);
+        ds.ensureIndex(User.class, "cellnumber", "cellnumber", true, true);
+        ds.ensureIndex(Group.class, "user_groupname", "name, user", true, true);
+
+
+        return  ds;
     }
 }

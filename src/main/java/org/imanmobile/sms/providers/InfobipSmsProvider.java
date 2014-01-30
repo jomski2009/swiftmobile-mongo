@@ -31,7 +31,7 @@ public class InfobipSmsProvider {
     private static final String API_URL_COMMAND = "http://api.infobip.com/api/command?";
 
 
-    public SmsResponseWrapper sendJsonSMS(SmsWrapper smsWrapper) throws ParseException {
+    public SmsResponseWrapper sendSms(SmsWrapper smsWrapper) throws ParseException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         RestTemplate template = new RestTemplate();

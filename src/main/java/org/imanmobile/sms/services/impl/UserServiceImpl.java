@@ -1,8 +1,10 @@
 package org.imanmobile.sms.services.impl;
 
+import com.mongodb.MongoException;
 import org.imanmobile.sms.core.domain.Account;
 import org.imanmobile.sms.core.domain.Group;
 import org.imanmobile.sms.core.domain.User;
+import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.services.UserService;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -38,10 +40,9 @@ public class UserServiceImpl implements UserService {
             user.setDatejoined(new Date());
 
             datastore.save(user);
-            Query<User> query = datastore.createQuery(User.class)
-                    .field("username").equal(user.getUsername());
+            user = setUserAndDefaultGroup(user);
 
-            return query.get();
+            return user;
 
         } else {
             return null;
@@ -49,16 +50,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(User user) {
+    public User addUser(User user) throws MongoException {
         if (validated(user)) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setDatejoined(new Date());
+            Account account = new Account();
+            account.setBalance(0);
+            account.setSmsvalue(0.25);
+            user.setAccount(account);
 
             datastore.save(user);
-            Query<User> query = datastore.createQuery(User.class)
-                    .field("username").equal(user.getUsername());
 
-            return query.get();
+            user = setUserAndDefaultGroup(user);
+
+            return user;
 
         } else {
             return null;
@@ -66,14 +71,90 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserAccount(User user) {
+    public void activateAccount(String username) {
+        Query<User> query = datastore.find(User.class, "username", username);
+        User user = query.get();
+        if (user != null) {
+            user.getAccount().setActive(true);
+            datastore.save(user);
+        }
+    }
 
+    @Override
+    public double updateAccountBalanceForUser(String username, double addAmount) throws UserNotFoundException {
+        User user = getUser(username);
+        if (user != null) {
+            user.getAccount().setBalance(user.getAccount().getBalance() + addAmount);
+            datastore.save(user);
+            return user.getAccount().getBalance();
+        } else {
+            throw new UserNotFoundException("The requested user was not found");
+        }
+
+    }
+
+    @Override
+    public double updateSmsValueForUser(String username, double smsValue) throws UserNotFoundException {
+        User user = getUser(username);
+        if (user != null) {
+            //Should add some audting here...
+            user.getAccount().setSmsvalue(smsValue);
+            datastore.save(user);
+            return user.getAccount().getSmsvalue();
+        } else {
+            throw new UserNotFoundException("The requested user was not found");
+
+        }
+
+    }
+
+    @Override
+    public double getBalanceFor(String username) throws UserNotFoundException {
+        User user = getUser(username);
+        if (user != null) {
+            return user.getAccount().getBalance();
+        } else {
+            throw new UserNotFoundException("The requested user was not found");
+        }
+    }
+
+    @Override
+    public double getSmsValueFor(String username) throws UserNotFoundException {
+        User user = getUser(username);
+        if (user != null) {
+            return user.getAccount().getSmsvalue();
+        } else {
+            throw new UserNotFoundException("The requested user was not found");
+        }
     }
 
     private boolean validated(User user) {
         //Check for valid and non empty fields
-        //such as email, firstname, lastname, username(unique), cellnumber (ZA for now)
+        if (user.getUsername().trim().isEmpty()) return false;
 
         return true; //for now...
+    }
+
+    private User getUser(String username) {
+        Query<User> query = datastore.find(User.class, "username", username);
+        User user = query.get();
+        return user;
+    }
+
+    private User setUserAndDefaultGroup(User user) {
+        Query<User> query = datastore.createQuery(User.class)
+                .field("username").equal(user.getUsername());
+        user = query.get();
+
+        Group group = new Group();
+        group.setName("Default");
+        group.setDescription("Default sms group for " + user.getUsername());
+        group.setUser(user);
+        group.setCreationdate(new Date());
+        datastore.save(group);
+
+        user.getUsergroups().add(group);
+        datastore.save(user);
+        return user;
     }
 }
