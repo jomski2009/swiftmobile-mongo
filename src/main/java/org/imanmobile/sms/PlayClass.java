@@ -58,7 +58,8 @@ public class PlayClass implements CommandLineRunner {
         //getGroups(username);
         //getGroup(username, "CE Centurion Members");
         //addRecipientsToGroup(username);
-        sendSmsWithGroup(username, groupname);
+        //sendSmsWithGroup(username, groupname);
+        deleteRecipientFromGroup(username, groupname);
     }
 
     private void addGroupToUser(String username) {
@@ -147,16 +148,24 @@ public class PlayClass implements CommandLineRunner {
         Recipient r2 = new Recipient(27837930939L, "Jome", "Akpoduado", "CTO");
         Recipient r3 = new Recipient(27836173018L, "Juliet", "Akpoduado", "WifeC", "July 7th");
         Recipient r4 = new Recipient(27837930950L, "Emile", "Senga", "Awesome developer");
+        Recipient r5 = new Recipient(27123456789L, "Joe", "Blog", "Unknown user");
 
         recipients.add(r1);
         recipients.add(r2);
         recipients.add(r3);
         recipients.add(r4);
+        recipients.add(r5);
         groupService.addRecipientsToGroup(username, groupname, recipients);
 
         groupService.getRecipientsInGroup(groupname, username);
 
         //Get the group
+    }
+
+    private void deleteRecipientFromGroup(String username, String groupname) {
+        Recipient recipient = new Recipient();
+        recipient.setGsm(27836173018L);
+        groupService.deleteRecipientFromGroup(username, groupname, recipient);
     }
 
 

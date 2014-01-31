@@ -51,6 +51,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public void deleteRecipientFromGroup(String username, String groupname, Recipient recipient) {
+        Group group = getGroup(groupname, username);
+        group.getRecipients().remove(recipient);
+        datastore.save(group);
+    }
+
+    @Override
     public Group getGroup(String groupname, String username) {
         Group group = datastore.createQuery(Group.class).field("name").equal(groupname).field("user_id").equal(username).get();
         return group;

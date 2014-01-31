@@ -15,6 +15,8 @@ public interface GroupService {
 
     void addRecipientsToGroup(String username, String groupname, List<Recipient> recipients);
 
+    void deleteRecipientFromGroup(String username, String groupname, Recipient recipient);
+
     Group getGroup(String groupname, String username);
 
     List<Recipient> getRecipientsInGroup(String groupname, String username);

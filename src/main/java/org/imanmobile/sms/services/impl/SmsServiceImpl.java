@@ -72,7 +72,16 @@ public class SmsServiceImpl implements SmsService {
                 SmsResponseWrapper smsResponseWrapper = smsProvider.sendSms(wrapper);
                 //How do I know if the smses were sent successfully so
                 //we can deduct from the user balance.
+                int successCount = 0;
                 List<SmsResponse> responses = smsResponseWrapper.getResults();
+                for (SmsResponse response : responses) {
+                    if (response.getStatus() == 0) {
+                        successCount++;
+                    }
+                }
+
+                System.out.println("Total smses sent: " + successCount);
+
                 if (responses.size() == 1) {
                     //Most likey the transaction failed...
                     if (responses.get(0).getStatus() == 0) {
