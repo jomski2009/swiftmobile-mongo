@@ -1,6 +1,7 @@
 package org.imanmobile.sms.services.impl;
 
 import org.imanmobile.sms.core.domain.*;
+import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.SmsProvider;
 import org.imanmobile.sms.services.GroupService;
 import org.imanmobile.sms.services.SmsService;
@@ -69,6 +70,21 @@ public class SmsServiceImpl implements SmsService {
 
             try {
                 SmsResponseWrapper smsResponseWrapper = smsProvider.sendSms(wrapper);
+                //How do I know if the smses were sent successfully so
+                //we can deduct from the user balance.
+                List<SmsResponse> responses = smsResponseWrapper.getResults();
+                if (responses.size() == 1) {
+                    //Most likey the transaction failed...
+                    if (responses.get(0).getStatus() == 0) {
+                        //Do a debit on the users balance
+
+                    } else {
+                        //The assumption is that the sending failed
+                    }
+                } else {
+                    //Iterate through the result and if any status was not zero, dont debit the user
+                    //Otherwise add to a count and debit the user...
+                }
                 return smsResponseWrapper.getResults();
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -80,6 +96,11 @@ public class SmsServiceImpl implements SmsService {
 
     @Override
     public double getBalance(String username) {
+        try {
+            return userService.getBalanceFor(username);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 }
