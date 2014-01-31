@@ -1,14 +1,9 @@
 package org.imanmobile.sms.core.domain;
 
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
 
 @Entity
 public class Recipient {
-    @Id
-    private ObjectId id;
-
 
     private long gsm;
     private String firstvalue;
@@ -23,6 +18,33 @@ public class Recipient {
     public Recipient(long gsm) {
         this.gsm = gsm;
     }
+
+    public Recipient(long gsm, String firstvalue) {
+        this.gsm = gsm;
+        this.firstvalue = firstvalue;
+    }
+
+    public Recipient(long gsm, String firstvalue, String secondvalue) {
+        this.gsm = gsm;
+        this.firstvalue = firstvalue;
+        this.secondvalue = secondvalue;
+    }
+
+    public Recipient(long gsm, String firstvalue, String secondvalue, String thirdvalue) {
+        this.gsm = gsm;
+        this.firstvalue = firstvalue;
+        this.secondvalue = secondvalue;
+        this.thirdvalue = thirdvalue;
+    }
+
+    public Recipient(long gsm, String firstvalue, String secondvalue, String thirdvalue, String fourthvalue) {
+        this.gsm = gsm;
+        this.firstvalue = firstvalue;
+        this.secondvalue = secondvalue;
+        this.thirdvalue = thirdvalue;
+        this.fourthvalue = fourthvalue;
+    }
+
 
     public long getGsm() {
         return gsm;
@@ -72,11 +94,32 @@ public class Recipient {
         this.fifthvalue = fifthvalue;
     }
 
-    public ObjectId getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "Recipient{" +
+                "gsm=" + gsm +
+                ", firstvalue='" + firstvalue + '\'' +
+                ", secondvalue='" + secondvalue + '\'' +
+                ", thirdvalue='" + thirdvalue + '\'' +
+                ", fourthvalue='" + fourthvalue + '\'' +
+                ", fifthvalue='" + fifthvalue + '\'' +
+                '}';
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Recipient)) return false;
+
+        Recipient recipient = (Recipient) o;
+
+        if (gsm != recipient.gsm) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (gsm ^ (gsm >>> 32));
     }
 }

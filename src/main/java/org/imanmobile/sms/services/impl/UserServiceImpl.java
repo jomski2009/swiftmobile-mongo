@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by jome on 2014/01/29.
@@ -132,6 +131,8 @@ public class UserServiceImpl implements UserService {
         //Check for valid and non empty fields
         if (user.getUsername().trim().isEmpty()) return false;
 
+        if (datastore.find(User.class, "username", user.getUsername()).get() != null) return false;
+
         return true; //for now...
     }
 
@@ -149,7 +150,8 @@ public class UserServiceImpl implements UserService {
         Group group = new Group();
         group.setName("Default");
         group.setDescription("Default sms group for " + user.getUsername());
-        group.setUser(user);
+        group.setUser_id(user.getUsername());
+        group.setUser_id(user.getUsername());
         group.setCreationdate(new Date());
         datastore.save(group);
 

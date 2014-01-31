@@ -1,17 +1,12 @@
 package org.imanmobile.sms;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.imanmobile.sms.core.domain.*;
 import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.InfobipSmsProvider;
+import org.imanmobile.sms.services.GroupService;
 import org.imanmobile.sms.services.UserService;
 import org.json.simple.parser.ParseException;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,17 +14,21 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Component
 public class PlayClass implements CommandLineRunner {
-            @Autowired
+    @Autowired
     Environment env;
 
 
-	@Autowired
-	BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
-	@Autowired
-	Datastore datastore;
+    @Autowired
+    Datastore datastore;
 
     @Autowired
     InfobipSmsProvider infobipSmsProvider;
@@ -37,34 +36,60 @@ public class PlayClass implements CommandLineRunner {
     @Autowired
     UserService userService;
 
+    @Autowired
+    GroupService groupService;
+
     @Override
-	public void run(String... args) throws Exception {
-//        createUser();
-//        activateAccount();
-        getBalanceAndSmsValue();
+    public void run(String... args) throws Exception {
+        String username = "jomski2009";
+        //createUser(username);
+        //activateAccount();
+        setBalanceAndSmsValue(username);
+        getBalanceAndSmsValue(username);
+
+
+        //addGroupToUser(username);
+        //getGroups(username);
+        //getGroup(username, "CE Centurion Members");
+        addRecipientsToGroup(username);
+    }
+
+    private void addGroupToUser(String username) {
+        Group group = new Group();
+        group.setCreationdate(new Date());
+        group.setDescription("Christ Embassy Centurion members");
+        group.setName("CE Centurion Members");
+        groupService.addGroupToUser(group, username);
+    }
+
+    private void getGroups(String username) {
+        System.out.println(groupService.getGroupsFor(username));
 
     }
 
-    private void activateAccount() {
-        String username = "jomski2009";
+    private void getGroup(String username, String groupname) {
+        Group group = groupService.getGroup(groupname, username);
+        System.out.println(group);
+
+    }
+
+    private void activateAccount(String username) {
         userService.activateAccount(username);
     }
 
-    private void setBalanceAndSmsValue() {
-        String username = "jomski2009";
+    private void setBalanceAndSmsValue(String username) {
         double v = 0;
         double v1 = 0;
         try {
-            v = userService.updateAccountBalanceForUser(username, -1);
-            v1 = userService.updateSmsValueForUser(username, 0.18);
+            v = userService.updateAccountBalanceForUser(username, 300);
+            v1 = userService.updateSmsValueForUser(username, 0.25);
             System.out.println("Account Balance: " + v + "\nSms Value: " + v1);
         } catch (UserNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void getBalanceAndSmsValue() {
-        String username = "jomski2009";
+    private void getBalanceAndSmsValue(String username) {
         double v = 0;
         double v1 = 0;
         try {
@@ -76,22 +101,22 @@ public class PlayClass implements CommandLineRunner {
         }
     }
 
-    private void createUser() {
+    private void createUser(String username) {
         try {
             User user = new User();
-        Account account = new Account();
-        account.setActive(true);
-        account.setBalance(0);
+            Account account = new Account();
+            account.setActive(true);
+            account.setBalance(0);
             account.setSmsvalue(0.25);
 
             user.setAccount(account);
-        user.setActive(true);
-            user.setCellnumber(27836173018L);
-            user.setEmail("juliet@example.com");
-            user.setFirstname("Juliet");
+            user.setActive(true);
+            user.setCellnumber(27719166815L);
+            user.setEmail("jome@example.com");
+            user.setFirstname("Jome");
             user.setLastname("Akpoduado");
-        user.setPassword("wordpass15");
-            user.setUsername("juliet");
+            user.setPassword("wordpass15");
+            user.setUsername(username);
 
 
             System.out.println(userService.addUser(user));
@@ -103,8 +128,27 @@ public class PlayClass implements CommandLineRunner {
 
     }
 
+    private void addRecipientsToGroup(String username) {
+        String groupname = "Default";
+        List<Recipient> recipients = new ArrayList<>();
+        Recipient r1 = new Recipient(27719166815L, "Jome", "Akpoduado", "Pastor");
+        Recipient r2 = new Recipient(27837930939L, "Jome", "Akpoduado", "CTO");
+        Recipient r3 = new Recipient(27836173018L, "Juliet", "Akpoduado", "WifeC", "July 7th");
+        Recipient r4 = new Recipient(27837930939L, "Emile", "Senga", "Awesome developer");
 
-    private void sendSms(){
+        recipients.add(r1);
+        recipients.add(r2);
+        recipients.add(r3);
+        recipients.add(r4);
+        groupService.addRecipientsToGroup(username, groupname, recipients);
+
+        groupService.getRecipientsInGroup(groupname, username);
+
+        //Get the group
+    }
+
+
+    private void sendSms() {
         SmsWrapper wrapper = new SmsWrapper();
         SenderAuthentication authentication = new SenderAuthentication();
         Sms sms = new Sms();
@@ -144,9 +188,6 @@ public class PlayClass implements CommandLineRunner {
         messages.add(baseSms1);
 
 
-
-
-
         authentication.setUsername("ImanAfrica");
         authentication.setPassword("Afri2013");
 
@@ -163,67 +204,17 @@ public class PlayClass implements CommandLineRunner {
 
     }
 
-	private void scenario2() {
-		
-		User user = datastore.find(User.class).filter("username", "jomski2013").get();
-	}
+    private User setupUser(User newUser) {
+        newUser.setActive(true);
+        newUser.setCellnumber(27719166815L);
+        newUser.setUsername("jomski2013");
+        newUser.setEmail("jomea@yookos.com");
+        newUser.setFirstname("Jome");
+        newUser.setLastname("Akpoduado");
+        newUser.setPassword(passwordEncoder.encode("password"));
+        newUser.setDatejoined(new Date());
 
-	private void scenario1() {
-
-		User newUser = setupUser(new User());
-		datastore.save(newUser);
-		Query<User> query = datastore.createQuery(User.class)
-				.field("firstname").equal("Jome");
-		User user = query.get();
-
-		Account account = new Account();
-		account.setBalance(0.0);
-        account.setSmsvalue(0.0);
-
-        UpdateOperations<User> update = datastore
-				.createUpdateOperations(User.class);
-		update.set("account", account);
-		
-		List<Group> groups = query.get().getUsergroups();
-
-		Group group1 = new Group();
-        group1.setCreationdate(new Date());
-        group1.setDescription("test group for first user");
-		group1.setName("Group One");
-		group1.setUser(query.get());
-		datastore.save(group1);
-		groups.add(group1);
-		update.add("usergroups", group1);
-		datastore.update(query, update);
-
-		Group group2 = new Group();
-        group2.setCreationdate(new Date());
-        group2.setDescription("Another test group for first user");
-		group2.setName("Group Two");
-		group2.setUser(query.get());
-		datastore.save(group2);
-		groups.add(group2);
-
-		update.add("usergroups", group2);
-
-		datastore.update(query, update);
-
-		System.out.println(user);
-		List<Group> savedgroups = user.getUsergroups();
-		System.out.println(savedgroups);
-	}
-
-	private User setupUser(User newUser) {
-		newUser.setActive(true);
-		newUser.setCellnumber(27719166815L);
-		newUser.setUsername("jomski2013");
-		newUser.setEmail("jomea@yookos.com");
-		newUser.setFirstname("Jome");
-		newUser.setLastname("Akpoduado");
-		newUser.setPassword(passwordEncoder.encode("password"));
-		newUser.setDatejoined(new Date());
-
-		return newUser;
-	}
+        return newUser;
+    }
 
 }
