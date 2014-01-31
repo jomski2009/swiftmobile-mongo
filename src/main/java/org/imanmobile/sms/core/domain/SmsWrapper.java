@@ -25,4 +25,13 @@ public class SmsWrapper {
     public void setMessages(List<BaseSms> messages) {
         this.messages = messages;
     }
+
+
+    @Override
+    public String toString() {
+        return "SmsWrapper{" +
+                "authentication=" + authentication +
+                ", messages=" + messages +
+                '}';
+    }
 }

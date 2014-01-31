@@ -1,9 +1,11 @@
 package org.imanmobile.sms;
 
+import com.mongodb.MongoException;
 import org.imanmobile.sms.core.domain.*;
 import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.InfobipSmsProvider;
 import org.imanmobile.sms.services.GroupService;
+import org.imanmobile.sms.services.SmsService;
 import org.imanmobile.sms.services.UserService;
 import org.json.simple.parser.ParseException;
 import org.mongodb.morphia.Datastore;
@@ -39,27 +41,37 @@ public class PlayClass implements CommandLineRunner {
     @Autowired
     GroupService groupService;
 
+    @Autowired
+    SmsService smsService;
+
     @Override
     public void run(String... args) throws Exception {
         String username = "jomski2009";
+        String groupname = "Default";
         //createUser(username);
-        //activateAccount();
-        setBalanceAndSmsValue(username);
-        getBalanceAndSmsValue(username);
+        //ctivateAccount(username);
+        //setBalanceAndSmsValue(username);
+        //getBalanceAndSmsValue(username);
 
 
         //addGroupToUser(username);
         //getGroups(username);
         //getGroup(username, "CE Centurion Members");
-        addRecipientsToGroup(username);
+        //addRecipientsToGroup(username);
+        sendSmsWithGroup(username, groupname);
     }
 
     private void addGroupToUser(String username) {
-        Group group = new Group();
-        group.setCreationdate(new Date());
-        group.setDescription("Christ Embassy Centurion members");
-        group.setName("CE Centurion Members");
-        groupService.addGroupToUser(group, username);
+        try {
+            Group group = new Group();
+            group.setCreationdate(new Date());
+            group.setDescription("second group for: " + username);
+            group.setName("Group 2");
+            groupService.addGroupToUser(group, username);
+
+        } catch (MongoException me) {
+            System.out.println(me.toString());
+        }
     }
 
     private void getGroups(String username) {
@@ -134,7 +146,7 @@ public class PlayClass implements CommandLineRunner {
         Recipient r1 = new Recipient(27719166815L, "Jome", "Akpoduado", "Pastor");
         Recipient r2 = new Recipient(27837930939L, "Jome", "Akpoduado", "CTO");
         Recipient r3 = new Recipient(27836173018L, "Juliet", "Akpoduado", "WifeC", "July 7th");
-        Recipient r4 = new Recipient(27837930939L, "Emile", "Senga", "Awesome developer");
+        Recipient r4 = new Recipient(27837930950L, "Emile", "Senga", "Awesome developer");
 
         recipients.add(r1);
         recipients.add(r2);
@@ -147,6 +159,18 @@ public class PlayClass implements CommandLineRunner {
         //Get the group
     }
 
+
+    private void sendSmsWithGroup(String username, String groupname) {
+        Sms sms = new Sms();
+        sms.setMessageid("message1");
+        sms.setText("This is a third medium length text. blah blah blah blah blah blah blah");
+        if (sms.getText().trim().length() > 160)
+            sms.setType("longSMS");
+        List<SmsResponse> responses = smsService.sendSms(username, groupname, sms);
+        for (SmsResponse response : responses) {
+            System.out.println(response);
+        }
+    }
 
     private void sendSms() {
         SmsWrapper wrapper = new SmsWrapper();

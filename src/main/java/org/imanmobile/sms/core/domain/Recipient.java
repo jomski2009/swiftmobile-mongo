@@ -5,12 +5,12 @@ import org.mongodb.morphia.annotations.Entity;
 @Entity
 public class Recipient {
 
-    private long gsm;
-    private String firstvalue;
-    private String secondvalue;
-    private String thirdvalue;
-    private String fourthvalue;
-    private String fifthvalue;
+    protected long gsm;
+    protected String firstvalue;
+    protected String secondvalue;
+    protected String thirdvalue;
+    protected String fourthvalue;
+    protected String fifthvalue;
 
     public Recipient() {
     }

@@ -1,11 +1,12 @@
 package org.imanmobile.sms.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jome on 2014/01/29.
@@ -27,7 +28,7 @@ public class Sms {
     private List<Recipient> recipients = new ArrayList<Recipient>();
     private List<SmsResponse> responses = new ArrayList<SmsResponse>();
 
-    private User sender;
+    private String sender_id;
 
     public String getText() {
         return text;
@@ -77,12 +78,12 @@ public class Sms {
         this.responses = responses;
     }
 
-    public User getSender() {
-        return sender;
+    public String getSender_id() {
+        return sender_id;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setSender(String sender_id) {
+        this.sender_id = sender_id;
     }
 
     public ObjectId getId() {

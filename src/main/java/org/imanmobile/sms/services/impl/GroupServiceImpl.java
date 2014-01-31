@@ -1,5 +1,6 @@
 package org.imanmobile.sms.services.impl;
 
+import com.mongodb.MongoException;
 import org.imanmobile.sms.core.domain.Group;
 import org.imanmobile.sms.core.domain.Recipient;
 import org.imanmobile.sms.core.domain.User;
@@ -25,7 +26,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void addGroupToUser(Group group, String username) {
+    public void addGroupToUser(Group group, String username) throws MongoException {
         User user = datastore.find(User.class, "username", username).get();
         group.setUser_id(user.getUsername());
         datastore.save(group);
@@ -36,14 +37,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void addRecipientsToGroup(String username, String groupname, List<Recipient> recipients) {
         Group group = getGroup(groupname, username);
-        group.getRecipients().clear();
+        //group.getRecipients().clear();
         System.out.println("Number of cellnumbers: " + group.getRecipients().size());
 
-//        for (Recipient r : recipients) {
-//            if (!group.getRecipients().contains(r))
-//                group.getRecipients().add(r);
-//        }
-//
+        for (Recipient r : recipients) {
+            if (!group.getRecipients().contains(r))
+                group.getRecipients().add(r);
+        }
+
         datastore.save(group);
         System.out.println("Number of cellnumbers after save(): " + group.getRecipients().size());
 

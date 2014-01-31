@@ -55,7 +55,7 @@ public class MongoDbConfiguration {
 //        ds.ensureIndex(User.class, "username", "username", true, true);
         ds.ensureIndex(User.class, "email", "email", true, true);
         ds.ensureIndex(User.class, "cellnumber", "cellnumber", true, true);
-        ds.ensureIndex(Group.class, "recipient_cellnumber", "recipients.gsm", true, true);
+        ds.ensureIndex(Group.class, "name_userid", "name, user_id", true, true);
 
 
         return  ds;

@@ -1,7 +1,6 @@
 package org.imanmobile.sms.core.domain;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ public class BaseSms {
     private String type;
 
 
-    private List<Recipient> recipients = new ArrayList<Recipient>();
+    private List<BaseRecipient> baseRecipients = new ArrayList<BaseRecipient>();
 
     public String getText() {
         return text;
@@ -40,11 +39,21 @@ public class BaseSms {
         this.type = type;
     }
 
-    public List<Recipient> getRecipients() {
-        return recipients;
+    public List<BaseRecipient> getBaseRecipients() {
+        return baseRecipients;
     }
 
-    public void setRecipients(List<Recipient> recipients) {
-        this.recipients = recipients;
+    public void setBaseRecipients(List<BaseRecipient> recipients) {
+        this.baseRecipients = recipients;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseSms{" +
+                "text='" + text + '\'' +
+                ", messageid='" + messageid + '\'' +
+                ", type='" + type + '\'' +
+                ", recipients=" + baseRecipients +
+                '}';
     }
 }
