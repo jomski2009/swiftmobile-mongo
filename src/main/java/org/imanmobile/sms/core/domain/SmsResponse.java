@@ -1,26 +1,17 @@
 package org.imanmobile.sms.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.mongodb.morphia.annotations.Embedded;
 
 /**
  * Created by jome on 2014/01/29.
  */
+
+@Embedded(value = "response")
 public class SmsResponse {
 
-    private long id;
     private int status;
     private String messageid;
     private long destination;
-
-
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getMessageid() {
         return messageid;

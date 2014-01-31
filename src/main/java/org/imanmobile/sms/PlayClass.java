@@ -2,6 +2,7 @@ package org.imanmobile.sms;
 
 import com.mongodb.MongoException;
 import org.imanmobile.sms.core.domain.*;
+import org.imanmobile.sms.exceptions.InsufficientCreditException;
 import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.InfobipSmsProvider;
 import org.imanmobile.sms.services.GroupService;
@@ -51,15 +52,15 @@ public class PlayClass implements CommandLineRunner {
         //createUser(username);
         //ctivateAccount(username);
         //setBalanceAndSmsValue(username);
-        //getBalanceAndSmsValue(username);
 
 
         //addGroupToUser(username);
         //getGroups(username);
         //getGroup(username, "CE Centurion Members");
         //addRecipientsToGroup(username);
-        //sendSmsWithGroup(username, groupname);
-        deleteRecipientFromGroup(username, groupname);
+        sendSmsWithGroup(username, groupname);
+        //deleteRecipientFromGroup(username, groupname);
+        getBalanceAndSmsValue(username);
     }
 
     private void addGroupToUser(String username) {
@@ -94,7 +95,7 @@ public class PlayClass implements CommandLineRunner {
         double v = 0;
         double v1 = 0;
         try {
-            v = userService.updateAccountBalanceForUser(username, 300);
+            v = userService.updateAccountBalanceForUser(username, 44.0);
             v1 = userService.updateSmsValueForUser(username, 0.25);
             System.out.println("Account Balance: " + v + "\nSms Value: " + v1);
         } catch (UserNotFoundException e) {
@@ -164,20 +165,27 @@ public class PlayClass implements CommandLineRunner {
 
     private void deleteRecipientFromGroup(String username, String groupname) {
         Recipient recipient = new Recipient();
-        recipient.setGsm(27836173018L);
+        recipient.setGsm(27837930950L);
         groupService.deleteRecipientFromGroup(username, groupname, recipient);
     }
 
 
     private void sendSmsWithGroup(String username, String groupname) {
-        Sms sms = new Sms();
-        sms.setMessageid("message1");
-        sms.setText("This is a third medium length text. blah blah blah blah blah blah blah");
-        if (sms.getText().trim().length() > 160)
-            sms.setType("longSMS");
-        List<SmsResponse> responses = smsService.sendSms(username, groupname, sms);
-        for (SmsResponse response : responses) {
-            System.out.println(response);
+        try {
+            Sms sms = new Sms();
+            sms.setMessageid("message1");
+            sms.setText("Last year the Government of Kenya was getting ready to dance..");
+            if (sms.getText().trim().length() > 160)
+                sms.setType("longSMS");
+            List<SmsResponse> responses = null;
+
+            responses = smsService.sendSms(username, groupname, sms);
+            for (SmsResponse response : responses) {
+                System.out.println(response);
+            }
+
+        } catch (InsufficientCreditException e) {
+            System.out.println(e.getMessage());
         }
     }
 

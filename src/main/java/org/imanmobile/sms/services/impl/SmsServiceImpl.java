@@ -1,6 +1,7 @@
 package org.imanmobile.sms.services.impl;
 
 import org.imanmobile.sms.core.domain.*;
+import org.imanmobile.sms.exceptions.InsufficientCreditException;
 import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.providers.SmsProvider;
 import org.imanmobile.sms.services.GroupService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,11 +41,28 @@ public class SmsServiceImpl implements SmsService {
     }
 
     @Override
-    public List<SmsResponse> sendSms(String username, String groupname, Sms sms) {
-        sms.setSender(username);
+    public List<SmsResponse> sendSms(String username, String groupname, Sms sms) throws InsufficientCreditException {
+
+        sms.setSender_id(username);
         Group group = groupService.getGroup(groupname, username);
         if (group != null) {
+            //Check if there is enough to send the sms
+            try {
+                double balance = userService.getBalanceFor(username);
+                int numberOfCreditsRequired = group.getRecipients().size() * (Math.round(sms.getText().length() / 160));
+                if (numberOfCreditsRequired > balance) {
+                    throw new InsufficientCreditException("This operation cannot be successfully completed. You have insufficient credits.");
+                }
+                return null;
+
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+            }
+
             sms.setRecipients(group.getRecipients());
+            datastore.save(sms);
+            sms.setMessageid(sms.getId().toString());
+
             SmsWrapper wrapper = new SmsWrapper();
             SenderAuthentication authentication = new SenderAuthentication();
             List<BaseSms> messages = new ArrayList<BaseSms>();
@@ -55,7 +74,7 @@ public class SmsServiceImpl implements SmsService {
             for (Recipient recipient : sms.getRecipients()) {
                 BaseRecipient baseRecipient = new BaseRecipient();
                 BeanUtils.copyProperties(recipient, baseRecipient);
-                baseRecipient.setMessageId(sms.getMessageid());
+                baseRecipient.setMessageId(sms.getId().toString());
                 baseRecipients.add(baseRecipient);
             }
             baseSms.setBaseRecipients(baseRecipients);
@@ -81,21 +100,26 @@ public class SmsServiceImpl implements SmsService {
                 }
 
                 System.out.println("Total smses sent: " + successCount);
+                double smsValue = userService.getSmsValueFor(username);
 
-                if (responses.size() == 1) {
-                    //Most likey the transaction failed...
-                    if (responses.get(0).getStatus() == 0) {
-                        //Do a debit on the users balance
-
-                    } else {
-                        //The assumption is that the sending failed
-                    }
-                } else {
-                    //Iterate through the result and if any status was not zero, dont debit the user
-                    //Otherwise add to a count and debit the user...
+                int smsesPerRecipient = 1;
+                if (sms.getText().length() > 160) {
+                    smsesPerRecipient = Math.round(sms.getText().length() / 160);
+                    System.out.println("smsesPerRecipient: " + smsesPerRecipient);
                 }
+
+
+                userService.updateAccountBalanceForUser(username, -(smsValue * successCount * smsesPerRecipient));
+
+                sms.setResponses(smsResponseWrapper.getResults());
+                sms.setSent(true);
+                sms.setDatesent(new Date());
+                sms.setCreditsused(successCount * smsesPerRecipient * smsValue);
+                datastore.save(sms);
                 return smsResponseWrapper.getResults();
             } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (UserNotFoundException e) {
                 e.printStackTrace();
             }
         }

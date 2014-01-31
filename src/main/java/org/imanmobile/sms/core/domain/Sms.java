@@ -23,12 +23,14 @@ public class Sms {
     private String messageid;
     private String type;
     private Date datesent;
+    private boolean sent;
+    private String sender_id;
+    private double creditsused;
 
 
     private List<Recipient> recipients = new ArrayList<Recipient>();
     private List<SmsResponse> responses = new ArrayList<SmsResponse>();
 
-    private String sender_id;
 
     public String getText() {
         return text;
@@ -78,19 +80,35 @@ public class Sms {
         this.responses = responses;
     }
 
-    public String getSender_id() {
-        return sender_id;
-    }
-
-    public void setSender(String sender_id) {
-        this.sender_id = sender_id;
-    }
-
     public ObjectId getId() {
         return id;
     }
 
     public void setId(ObjectId id) {
         this.id = id;
+    }
+
+    public boolean isSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
+    }
+
+    public String getSender_id() {
+        return sender_id;
+    }
+
+    public double getCreditsused() {
+        return creditsused;
+    }
+
+    public void setCreditsused(double creditsused) {
+        this.creditsused = creditsused;
     }
 }
