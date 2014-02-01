@@ -131,6 +131,7 @@ public class PlayClass implements CommandLineRunner {
             user.setLastname("Akpoduado");
             user.setPassword("wordpass15");
             user.setUsername(username);
+            user.setRole(1);
 
 
             System.out.println(userService.addUser(user));
@@ -243,19 +244,6 @@ public class PlayClass implements CommandLineRunner {
 
         System.out.println("Credit remaining: " + infobipSmsProvider.getCredits());
 
-    }
-
-    private User setupUser(User newUser) {
-        newUser.setActive(true);
-        newUser.setCellnumber(27719166815L);
-        newUser.setUsername("jomski2013");
-        newUser.setEmail("jomea@yookos.com");
-        newUser.setFirstname("Jome");
-        newUser.setLastname("Akpoduado");
-        newUser.setPassword(passwordEncoder.encode("password"));
-        newUser.setDatejoined(new Date());
-
-        return newUser;
     }
 
 }

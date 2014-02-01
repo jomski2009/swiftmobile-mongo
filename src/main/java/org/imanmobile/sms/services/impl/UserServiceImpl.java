@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jome on 2014/01/29.
@@ -125,6 +126,16 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserNotFoundException("The requested user was not found");
         }
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return datastore.createQuery(User.class).asList();
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return datastore.find(User.class, "username", username).get();
     }
 
     private boolean validated(User user) {

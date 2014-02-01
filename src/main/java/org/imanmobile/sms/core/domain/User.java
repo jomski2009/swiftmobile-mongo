@@ -23,6 +23,7 @@ public class User implements Serializable {
     private boolean active;
     private String password;
     private Account account;
+    private int role;
 
     @Reference
     private List<Group> usergroups = new ArrayList<>();
@@ -120,6 +121,13 @@ public class User implements Serializable {
         this.usergroups = usergroups;
     }
 
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
 
     @Override
     public String toString() {
