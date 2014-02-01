@@ -66,7 +66,6 @@ public class PlayClass implements CommandLineRunner {
     private void addGroupToUser(String username) {
         try {
             Group group = new Group();
-            group.setCreationdate(new Date());
             group.setDescription("second group for: " + username);
             group.setName("Group 2");
             groupService.addGroupToUser(group, username);

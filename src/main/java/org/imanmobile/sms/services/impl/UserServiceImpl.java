@@ -138,6 +138,17 @@ public class UserServiceImpl implements UserService {
         return datastore.find(User.class, "username", username).get();
     }
 
+    @Override
+    public boolean activateUser(String username) {
+        User user = datastore.find(User.class, "username", username).get();
+        user.setActive(true);
+        datastore.save(user);
+
+        if (user.isActive()) return true;
+
+        return false;
+    }
+
     private boolean validated(User user) {
         //Check for valid and non empty fields
         if (user.getUsername().trim().isEmpty()) return false;

@@ -9,6 +9,7 @@ import org.mongodb.morphia.Datastore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,12 +27,14 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void addGroupToUser(Group group, String username) throws MongoException {
+    public Group addGroupToUser(Group group, String username) throws MongoException {
         User user = datastore.find(User.class, "username", username).get();
         group.setUser_id(user.getUsername());
+        group.setCreationdate(new Date());
         datastore.save(group);
         user.getUsergroups().add(group);
         datastore.save(user);
+        return group;
     }
 
     @Override

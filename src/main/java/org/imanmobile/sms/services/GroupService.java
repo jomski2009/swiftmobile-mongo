@@ -11,7 +11,7 @@ import java.util.List;
 public interface GroupService {
     List<Group> getGroupsFor(String username);
 
-    void addGroupToUser(Group group, String username);
+    Group addGroupToUser(Group group, String username);
 
     void addRecipientsToGroup(String username, String groupname, List<Recipient> recipients);
 

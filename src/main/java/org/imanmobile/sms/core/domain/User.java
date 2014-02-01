@@ -25,7 +25,7 @@ public class User implements Serializable {
     private Account account;
     private int role;
 
-    @Reference
+    @Reference(lazy = true)
     private List<Group> usergroups = new ArrayList<>();
 
     public User() {
