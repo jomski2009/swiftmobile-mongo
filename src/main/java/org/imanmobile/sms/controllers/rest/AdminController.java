@@ -1,10 +1,12 @@
 package org.imanmobile.sms.controllers.rest;
 
+import org.imanmobile.sms.exceptions.UserNotFoundException;
 import org.imanmobile.sms.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,41 @@ public class AdminController {
 
         if (result) return new ResponseEntity<>(username + " successfully activated. ", HttpStatus.OK);
         return new ResponseEntity<>("unable to activate user: " + username, HttpStatus.OK);
+    }
+
+    @RequestMapping("users/{username}/disable")
+    public ResponseEntity<String> deactivateUser(@PathVariable("username") String username) {
+        boolean result = userService.deactivateUser(username);
+
+        if (result) return new ResponseEntity<>(username + " successfully activated. ", HttpStatus.OK);
+        return new ResponseEntity<>("unable to activate user: " + username, HttpStatus.OK);
+    }
+
+
+    @RequestMapping("users/{username}/account/enable")
+    public ResponseEntity<String> activateAccountUser(@PathVariable("username") String username) {
+        boolean result = userService.activateAccountForUser(username);
+
+        if (result) return new ResponseEntity<>(username + " successfully activated. ", HttpStatus.OK);
+        return new ResponseEntity<>("unable to activate user: " + username, HttpStatus.OK);
+    }
+
+    @RequestMapping("users/{username}/account/disable")
+    public ResponseEntity<String> deactivateAccountUser(@PathVariable("username") String username) {
+        boolean result = userService.deactivateAccountForUser(username);
+
+        if (result) return new ResponseEntity<>(username + " successfully activated. ", HttpStatus.OK);
+        return new ResponseEntity<>("unable to activate user: " + username, HttpStatus.OK);
+    }
+
+    @RequestMapping("users/{username}/account/addcredit")
+    public ResponseEntity<String> addCreditsForUser(@PathVariable("username") String username, @RequestBody double value) {
+        try {
+            userService.updateAccountBalanceForUser(username, value);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

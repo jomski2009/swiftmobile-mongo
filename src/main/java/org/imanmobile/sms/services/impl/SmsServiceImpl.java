@@ -49,12 +49,12 @@ public class SmsServiceImpl implements SmsService {
             //Check if there is enough to send the sms
             try {
                 double balance = userService.getBalanceFor(username);
-                int numberOfCreditsRequired = group.getRecipients().size() * (Math.round(sms.getText().length() / 160));
+
+                int numberOfCreditsRequired = group.getRecipients().size() * (int) (Math.ceil(sms.getText().length() / 160));
+                System.out.println("Credits required: " + numberOfCreditsRequired);
                 if (numberOfCreditsRequired > balance) {
                     throw new InsufficientCreditException("This operation cannot be successfully completed. You have insufficient credits.");
                 }
-                return null;
-
             } catch (UserNotFoundException e) {
                 e.printStackTrace();
             }

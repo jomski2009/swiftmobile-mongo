@@ -4,6 +4,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import org.imanmobile.sms.core.domain.Group;
 import org.imanmobile.sms.core.domain.User;
+import org.mongodb.morphia.AdvancedDatastore;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.springframework.context.annotation.Bean;
@@ -44,20 +45,21 @@ public class MongoDbConfiguration {
     BCryptPasswordEncoder passwordEncoder(){
     	return new BCryptPasswordEncoder();
     }
-    
+
     @Bean 
     Datastore morphia(){
     	Morphia morphia = new Morphia();
     	morphia.mapPackage("com.imanmobile.sms.core.domain");
-    	
-    	Datastore ds = morphia.createDatastore(mongoClient(), "imanmobile");
-    	ds.ensureIndexes();
+
+        Datastore ds = morphia.createDatastore(mongoClient(), "imanmobile");
+        AdvancedDatastore ads = (AdvancedDatastore) ds;
+        ads.ensureIndexes();
 //        ds.ensureIndex(User.class, "username", "username", true, true);
-        ds.ensureIndex(User.class, "email", "email", true, true);
-        ds.ensureIndex(User.class, "cellnumber", "cellnumber", true, true);
-        ds.ensureIndex(Group.class, "name_userid", "name, user_id", true, true);
+        ads.ensureIndex(User.class, "email", "email", true, true);
+        ads.ensureIndex(User.class, "cellnumber", "cellnumber", true, true);
+        ads.ensureIndex(Group.class, "name_userid", "name, user_id", true, true);
 
 
-        return  ds;
+        return ads;
     }
 }

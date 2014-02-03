@@ -30,4 +30,11 @@ public interface UserService {
     User findByUsername(String username);
 
     boolean activateUser(String username);
+
+    boolean deactivateUser(String username);
+
+    boolean activateAccountForUser(String username);
+
+    boolean deactivateAccountForUser(String username);
+
 }
