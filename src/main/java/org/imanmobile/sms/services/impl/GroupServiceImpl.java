@@ -9,6 +9,7 @@ import org.mongodb.morphia.Datastore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,9 +55,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteRecipientFromGroup(String username, String groupname, Recipient recipient) {
+    public void deleteRecipientsFromGroup(String username, String groupname, List<Recipient> recipients) {
         Group group = getGroup(groupname, username);
-        group.getRecipients().remove(recipient);
+        group.getRecipients().removeAll(recipients);
         datastore.save(group);
     }
 
@@ -69,6 +70,49 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Recipient> getRecipientsInGroup(String groupname, String username) {
         return getGroup(groupname, username).getRecipients();
+
+
+    }
+
+    @Override
+    public void addRecipientsToGroupViaCsv(String username, String groupname, List<String> rows) {
+        Group group = getGroup(groupname, username);
+
+
+        List<Recipient> recipients = new ArrayList<>();
+        rows.remove(0);
+
+        for (String r : rows) {
+            String[] recipientRow = r.split(";");
+            Recipient recipient = new Recipient();
+            System.out.println(recipientRow.length);
+            recipient.setGsm(Long.parseLong(recipientRow[0]));
+            if (recipientRow.length >= 2 && recipientRow[1] != null && recipientRow[1].trim().length() > 0) {
+                recipient.setFirstvalue(recipientRow[1]);
+            }
+            if (recipientRow.length >= 3 && recipientRow[2] != null && recipientRow[2].trim().length() > 0) {
+                recipient.setSecondvalue(recipientRow[2]);
+            }
+            if (recipientRow.length >= 4 && recipientRow[3] != null && recipientRow[3].trim().length() > 0) {
+                recipient.setThirdvalue(recipientRow[3]);
+            }
+            if (recipientRow.length >= 5 && recipientRow[4] != null && recipientRow[4].trim().length() > 0) {
+                recipient.setFourthvalue(recipientRow[4]);
+            }
+            if (recipientRow.length >= 6 && recipientRow[5] != null && recipientRow[5].trim().length() > 0) {
+                recipient.setFifthvalue(recipientRow[5]);
+            }
+
+            recipients.add(recipient);
+        }
+
+        for (Recipient r : recipients) {
+            if (!group.getRecipients().contains(r))
+                group.getRecipients().add(r);
+        }
+
+        datastore.save(group);
+        System.out.println("Number of cellnumbers after save(): " + group.getRecipients().size());
 
 
     }

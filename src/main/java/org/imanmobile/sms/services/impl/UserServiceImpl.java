@@ -170,7 +170,7 @@ public class UserServiceImpl implements UserService {
         user = query.get();
 
         Group group = new Group();
-        group.setName("Default");
+        group.setName("default");
         group.setDescription("Default sms group for " + user.getUsername());
         group.setUser_id(user.getUsername());
         group.setUser_id(user.getUsername());

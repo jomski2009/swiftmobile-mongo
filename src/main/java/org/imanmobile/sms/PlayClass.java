@@ -48,9 +48,9 @@ public class PlayClass implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String username = "jomski2009";
-        String groupname = "Default";
+        String groupname = "default";
         //createUser(username);
-        //ctivateAccount(username);
+        //activateAccount(username);
         //setBalanceAndSmsValue(username);
 
 
@@ -58,9 +58,9 @@ public class PlayClass implements CommandLineRunner {
         //getGroups(username);
         //getGroup(username, "CE Centurion Members");
         //addRecipientsToGroup(username);
-        sendSmsWithGroup(username, groupname);
+        //sendSmsWithGroup(username, groupname);
         //deleteRecipientFromGroup(username, groupname);
-        getBalanceAndSmsValue(username);
+        //getBalanceAndSmsValue(username);
     }
 
     private void addGroupToUser(String username) {
@@ -88,13 +88,14 @@ public class PlayClass implements CommandLineRunner {
 
     private void activateAccount(String username) {
         userService.activateAccount(username);
+        userService.activateUser(username);
     }
 
     private void setBalanceAndSmsValue(String username) {
         double v = 0;
         double v1 = 0;
         try {
-            v = userService.updateAccountBalanceForUser(username, 44.0);
+            v = userService.updateAccountBalanceForUser(username, 50);
             v1 = userService.updateSmsValueForUser(username, 0.25);
             System.out.println("Account Balance: " + v + "\nSms Value: " + v1);
         } catch (UserNotFoundException e) {
@@ -166,7 +167,9 @@ public class PlayClass implements CommandLineRunner {
     private void deleteRecipientFromGroup(String username, String groupname) {
         Recipient recipient = new Recipient();
         recipient.setGsm(27837930950L);
-        groupService.deleteRecipientFromGroup(username, groupname, recipient);
+        List<Recipient> recipients = new ArrayList<>();
+        recipients.add(recipient);
+        groupService.deleteRecipientsFromGroup(username, groupname, recipients);
     }
 
 
