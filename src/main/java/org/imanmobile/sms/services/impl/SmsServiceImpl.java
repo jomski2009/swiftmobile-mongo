@@ -49,10 +49,24 @@ public class SmsServiceImpl implements SmsService {
             //Check if there is enough to send the sms
             try {
                 double balance = userService.getBalanceFor(username);
+                double smsValue = userService.getSmsValueFor(username);
 
-                int numberOfCreditsRequired = group.getRecipients().size() * (int) (Math.ceil(sms.getText().length() / 160));
-                System.out.println("Credits required: " + numberOfCreditsRequired);
-                if (numberOfCreditsRequired > balance) {
+                int smsesNeeded = 1;
+
+                if (sms.getText().length() > 160 && sms.getText().length() <= 320) {
+                    smsesNeeded = 2;
+                }
+
+                if (sms.getText().length() > 320 && sms.getText().length() <= 480) {
+                    smsesNeeded = 3;
+                }
+
+                //Should I be setting a max limit on number of characters to send in a
+
+
+                double amountRequired = group.getRecipients().size() * smsesNeeded * smsValue;
+                System.out.println("Credits required: " + amountRequired);
+                if (amountRequired > balance) {
                     throw new InsufficientCreditException("This operation cannot be successfully completed. You have insufficient credits.");
                 }
             } catch (UserNotFoundException e) {
