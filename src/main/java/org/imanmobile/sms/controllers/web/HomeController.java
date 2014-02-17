@@ -13,18 +13,21 @@ public class HomeController {
 
     @RequestMapping()
     public String home(Model model) {
+        model.addAttribute("title", "Welcome Page...");
         model.addAttribute("message", "Welcome to ImanMobile. We will be coming live soon...");
         return "home";
     }
 
     @RequestMapping("/boot")
     public String boot(Model model) {
+        model.addAttribute("title", "Boot Example...");
         model.addAttribute("message", "This is the bootstrap view");
         return "boot";
     }
 
     @RequestMapping("/smslogin")
     public String login(Model model) {
+        model.addAttribute("title", "Login Screen...");
         model.addAttribute("message", "This is the bootstrap view");
         return "smslogin";
     }
