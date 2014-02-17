@@ -99,7 +99,7 @@ public class SmsServiceImpl implements SmsService {
 
             wrapper.setAuthentication(authentication);
             wrapper.setMessages(messages);
-            System.out.println(wrapper);
+            System.out.println(wrapper.getMessages());
 
             try {
                 SmsResponseWrapper smsResponseWrapper = smsProvider.sendSms(wrapper);
@@ -139,6 +139,20 @@ public class SmsServiceImpl implements SmsService {
         }
 
         return null;
+    }
+
+    @Override
+    public List<SmsReply> getReplies() {
+        List<SmsReply> replies = smsProvider.getSmsReplies();
+        for (SmsReply reply : replies) {
+            System.out.println(reply);
+            Sms sms = datastore.find(Sms.class, "messageid", reply.getExternalMessageId()).get();
+
+            sms.getSmsReplies().add(reply);
+            datastore.save(sms);
+        }
+
+        return smsProvider.getSmsReplies();
     }
 
     @Override

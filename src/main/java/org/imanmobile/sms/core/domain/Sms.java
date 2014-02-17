@@ -30,7 +30,15 @@ public class Sms {
 
     private List<Recipient> recipients = new ArrayList<Recipient>();
     private List<SmsResponse> responses = new ArrayList<SmsResponse>();
+    private List<SmsReply> smsReplies = new ArrayList<>();
 
+    public List<SmsReply> getSmsReplies() {
+        return smsReplies;
+    }
+
+    public void setSmsReplies(List<SmsReply> smsReplies) {
+        this.smsReplies = smsReplies;
+    }
 
     public String getText() {
         return text;
@@ -96,12 +104,12 @@ public class Sms {
         this.sent = sent;
     }
 
-    public void setSender_id(String sender_id) {
-        this.sender_id = sender_id;
-    }
-
     public String getSender_id() {
         return sender_id;
+    }
+
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
     }
 
     public double getCreditsused() {

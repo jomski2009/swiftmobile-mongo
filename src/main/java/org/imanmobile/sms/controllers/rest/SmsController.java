@@ -1,6 +1,8 @@
 package org.imanmobile.sms.controllers.rest;
 
 import org.imanmobile.sms.core.domain.Sms;
+import org.imanmobile.sms.core.domain.SmsPushReply;
+import org.imanmobile.sms.core.domain.SmsReply;
 import org.imanmobile.sms.core.domain.SmsResponse;
 import org.imanmobile.sms.exceptions.InsufficientCreditException;
 import org.imanmobile.sms.services.SmsService;
@@ -52,4 +54,33 @@ public class SmsController {
 
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
+
+    /**
+     * @return
+     */
+    @RequestMapping(value = "getreplies", method = RequestMethod.GET)
+    public ResponseEntity<List<SmsReply>> getReplies() {
+        List<SmsReply> replies = smsService.getReplies();
+
+        return new ResponseEntity<>(replies, HttpStatus.OK);
+    }
+
+    /**
+     * @return
+     */
+    @RequestMapping(value = "smsreplies")
+    public ResponseEntity<SmsPushReply> getPushReplies(@RequestParam("sender") long gsm, @RequestParam("text") String text, @RequestParam("datetime") String datetime, @RequestParam("messageid") String messageid, @RequestParam("output") String output) {
+        SmsPushReply reply = new SmsPushReply();
+        reply.setText(text);
+        reply.setDatetime(datetime);
+        reply.setSender(gsm);
+        reply.setMessageid(messageid);
+
+        System.out.println(reply);
+
+
+        return new ResponseEntity<>(reply, HttpStatus.ACCEPTED);
+    }
+
+
 }

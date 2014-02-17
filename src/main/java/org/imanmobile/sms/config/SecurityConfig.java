@@ -45,10 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
 
-        http.authorizeRequests().antMatchers("/").hasRole("USER")
+        http.authorizeRequests().antMatchers("/").permitAll()
                 .antMatchers("/user/**").permitAll()
+                .antMatchers("/resources/templates/**").permitAll()
+                .antMatchers("/sms/smsreplies").permitAll()
                 .anyRequest().authenticated();
         http.httpBasic();
+        http.formLogin();
         http.csrf().disable();
     }
 

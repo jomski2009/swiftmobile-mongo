@@ -58,6 +58,10 @@
     <orderEntry type="library" exported="" name="Gradle: hamcrest-core-1.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: junit-4.10" level="project" />
     <orderEntry type="library" exported="" name="Gradle: morphia-0.105" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: ognl-3.0.6" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: javassist-3.16.1-GA" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: thymeleaf-2.1.2.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: thymeleaf-spring4-2.1.2.RELEASE" level="project" />
   </component>
 </module>
 

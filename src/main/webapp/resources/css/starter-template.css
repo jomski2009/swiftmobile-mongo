@@ -1,0 +1,15 @@
+body {
+    padding-top: 50px;
+}
+
+.starter-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.col-xs-12 {
+    background-color: green;
+    color: #f5f5f5;
+    text-align: center;
+}
+

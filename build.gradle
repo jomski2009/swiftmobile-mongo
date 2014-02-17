@@ -42,6 +42,8 @@ dependencies {
 	compile 'com.thoughtworks.proxytoys:proxytoys:1.0'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE'
+
 
     testCompile "junit:junit:4.11"
 }
